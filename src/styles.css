@@ -1,0 +1,57 @@
+canvas {
+    border: 1px solid;
+    /* margin: 10px; */
+}
+
+.menu {
+    position: absolute;
+    z-index: 1000;
+    border: 1px solid;
+    min-width: 200px;
+    min-height: 150px;
+    background-color: white;
+    text-align: center;
+    top: 20px;
+    left: 20px;
+}
+
+.menu .options {
+    font-weight: bold;
+    background-color: #aaaaaa;
+    line-height: 1.5;
+    padding: 10px;
+    cursor: move;
+}
+
+.menu .generations {
+    margin-top: 12px;
+}
+
+.menu .live-cells {
+    margin-top: 12px;
+}
+
+.menu .main-settings {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 1rem;
+}
+
+.menu button {
+    margin-top: 12px;
+    width: 90px;
+    height: 30px;
+}
+
+.menu .show-grid {
+    margin-top: 12px;
+}
+
+.menu .slowdown {
+    margin-top: 12px;
+}
+
+.menu .new-life {
+    margin-top: 12px;
+}
