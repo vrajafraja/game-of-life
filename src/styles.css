@@ -1,57 +1,85 @@
 canvas {
-    border: 1px solid;
-    /* margin: 10px; */
+  border: 1px solid;
+  position: absolute;
 }
 
 .menu {
-    position: absolute;
-    z-index: 1000;
-    border: 1px solid;
-    min-width: 200px;
-    min-height: 150px;
-    background-color: white;
-    text-align: center;
-    top: 20px;
-    left: 20px;
+  position: absolute;
+  z-index: 50;
+  border: 1px solid;
+  min-width: 220px;
+  min-height: 150px;
+  background-color: white;
+  text-align: center;
+  top: 25px;
+  left: 25px;
 }
 
 .menu .options {
-    font-weight: bold;
-    background-color: #aaaaaa;
-    line-height: 1.5;
-    padding: 10px;
-    cursor: move;
+  font-weight: bold;
+  background-color: #aaaaaa;
+  line-height: 1.5;
+  padding: 10px;
+  cursor: move;
 }
 
 .menu .generations {
-    margin-top: 12px;
+  margin-top: 12px;
 }
 
 .menu .live-cells {
-    margin-top: 12px;
+  margin-top: 12px;
 }
 
 .menu .main-settings {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 1rem;
 }
 
 .menu button {
-    margin-top: 12px;
-    width: 90px;
-    height: 30px;
+  margin-top: 12px;
+  width: 90px;
+  height: 30px;
 }
 
 .menu .show-grid {
-    margin-top: 12px;
+  margin-top: 12px;
 }
 
-.menu .slowdown {
-    margin-top: 12px;
+.menu .speed {
+  margin-top: 12px;
 }
 
 .menu .new-life {
-    margin-top: 12px;
+  margin-top: 12px;
+}
+
+.shadow {
+  position: absolute;
+  z-index: 1000;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.52);
+  display: flex;
+}
+
+.shadow .modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border-radius: 1rem;
+  margin: auto;
+  padding: 2rem;
+}
+
+.shadow .modal .close {
+  align-self: flex-end;
+  background: transparent;
+  border: none;
+  font-weight: 900;
+  font-size: 1.25rem;
 }

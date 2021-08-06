@@ -1,6 +1,7 @@
 "use strict";
 
 const LIFE_TEMPLATES = {
+  singleCell: [[0, 0]],
   block: [
     [0, 0],
     [1, 0],
@@ -243,21 +244,21 @@ var canvas;
 var context;
 var mousePosition;
 
-var slowdown = 0;
+var speed = 0;
 var size = 10;
-var paused = false;
-var showGrid = false;
+var paused = true;
+var showGrid = true;
 
 let blobArray = [];
 let newLife = [];
 
 let desk;
 
-var ui;
-var utils;
+let _lastSpawn = 0;
 
-var heatMap;
-var heatMapVisits;
+function closeModal(target) {
+  target.remove();
+}
 
 function onPauseClick(event) {
   paused = !paused;
@@ -275,8 +276,8 @@ function onClearClick(event) {
   desk = [...Array(canvas.width)].map((x) => Array(canvas.height).fill(false));
 }
 
-function onSlowDownChange(value) {
-  slowdown = value;
+function onSpeedChange(value) {
+  speed = 0.5 - value;
 }
 
 function toggleGrid(event) {
@@ -301,7 +302,7 @@ function addLife(value) {
 
 dragElement(document.getElementById("menu"));
 
-function dragElement(elmnt) {
+function dragElement(element) {
   if (!document.getElementById("menu")) {
     return window.setTimeout(
       () => dragElement(document.getElementById("menu")),
@@ -317,7 +318,7 @@ function dragElement(elmnt) {
     document.getElementById("header").onmousedown = dragMouseDown;
   } else {
     /* otherwise, move the DIV from anywhere inside the DIV:*/
-    elmnt.onmousedown = dragMouseDown;
+    element.onmousedown = dragMouseDown;
   }
 
   function dragMouseDown(e) {
@@ -340,8 +341,8 @@ function dragElement(elmnt) {
     pos3 = e.clientX;
     pos4 = e.clientY;
     // set the element's new position:
-    elmnt.style.top = elmnt.offsetTop - pos2 + "px";
-    elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
+    element.style.top = element.offsetTop - pos2 + "px";
+    element.style.left = element.offsetLeft - pos1 + "px";
   }
 
   function closeDragElement() {
@@ -361,15 +362,29 @@ function init() {
   canvas.width =
     window.innerWidth - (window.innerWidth % (size * 2)) - size * 2;
   canvas.height = window.innerHeight - (window.innerHeight % (size * 2));
-  heatMap = context.createImageData(canvas.width, canvas.height);
   desk = [...Array(canvas.width)].map((x) => Array(canvas.height).fill(false));
 
   // Request an animation frame for the first time
   // The gameLoop() function will be called as a callback of this request
   window.requestAnimationFrame(gameLoop);
 
+  let background = document.getElementById("background");
   canvas.addEventListener("mouseup", mouseUp, false);
   canvas.addEventListener("mousemove", mouseMove, false);
+  background.addEventListener("click", (event) => {
+    if (event.target.id === "background") {
+      closeModal(event.target);
+    }
+    event.stopPropagation();
+  });
+  document.getElementById("closeModal").addEventListener("click", (event) => {
+    if (event.target.id === "closeModal") {
+      closeModal(background);
+    }
+    event.stopPropagation();
+  });
+
+  addLife("singleCell");
 }
 
 function mouseUp(event) {
@@ -379,7 +394,6 @@ function mouseUp(event) {
   positionY += size / 2;
   if (!desk[positionX][positionY]) {
     if (newLife.length) {
-      let blob;
       newLife.forEach((blob) => {
         blob = new Blob({
           positionX: blob._positionX + positionX,
@@ -399,7 +413,15 @@ function mouseUp(event) {
   } else {
     desk[positionX][positionY].destroy();
     desk[positionX][positionY] = false;
+    filterDestroyed();
   }
+}
+
+function filterDestroyed() {
+  blobArray.map((blob) => blob.update());
+  blobArray = blobArray.filter((blob) => {
+    return !blob.isDestroyed();
+  });
 }
 
 function mouseMove(event) {
@@ -421,32 +443,13 @@ function gameLoop(timeStamp) {
   // Perform the drawing operation
   draw();
 
-  // The loop function has reached it's end
-  // Keep requesting new frames
   window.requestAnimationFrame(gameLoop);
 }
-
-function drawGrid() {
-  for (var x = 0; x <= canvas.width; x += size) {
-    context.moveTo(0.5 + x + size, 0);
-    context.lineTo(0.5 + x + size, canvas.height);
-  }
-
-  for (var y = 0; y <= canvas.height; y += size) {
-    context.moveTo(0, 0.5 + y + size);
-    context.lineTo(canvas.width, 0.5 + y + size);
-  }
-
-  context.strokeStyle = "black";
-  context.stroke();
-}
-
-let _lastSpawn = 0;
 
 function update(secondsPassed) {
   if (!paused) {
     secondsInGame += secondsPassed;
-    if (secondsInGame - _lastSpawn > slowdown) {
+    if (secondsInGame - _lastSpawn > speed) {
       _lastSpawn = secondsInGame;
       generations++;
       for (let x = size / 2; x < canvas.width; x += size) {
@@ -468,25 +471,13 @@ function update(secondsPassed) {
           }
         }
       }
-      // for (let x = 15; x < canvas.width; x += 30) {
-      //     for (let y = 15; y < canvas.height; y += 30) {
-      //         let tile = desk[x][y];
-      //         if (tile && tile.shouldBeDeleted()) {
-      //             tile.kill();
-      //             desk[x][y] = false;
-      //         };
-      //     }
-      // }
     }
-    blobArray.map((blob) => blob.update());
-    blobArray = blobArray.filter((blob) => {
-      return !blob.isDestroyed();
-    });
+    filterDestroyed();
   }
 }
 
 function draw() {
-  // Clear the canvas
+  // Clear the canvas, draw new generations and display new life which will be placed on mouseup event
   document.getElementById("generations").innerText = generations;
   document.getElementById("liveCells").innerText = liveCells;
   context.clearRect(0, 0, canvas.width, canvas.height);
@@ -497,11 +488,22 @@ function draw() {
   newLife.forEach((blob) => blob.draw(mousePosition));
 }
 
-function getNeighbours(
-  positionX = this._positionX,
-  positionY = this._positionY,
-  size = this._size
-) {
+function drawGrid() {
+  for (var x = 0; x <= canvas.width; x += size) {
+    context.moveTo(0.5 + x + size, 0);
+    context.lineTo(0.5 + x + size, canvas.height);
+  }
+
+  for (var y = 0; y <= canvas.height; y += size) {
+    context.moveTo(0, 0.5 + y + size);
+    context.lineTo(canvas.width, 0.5 + y + size);
+  }
+
+  context.strokeStyle = "black";
+  context.stroke();
+}
+
+function getNeighbours(positionX, positionY, size) {
   let neighbours = 0;
   if (
     positionX - size < 0 ||

@@ -18,48 +18,49 @@
             <div class="new-life">
                 <label for="newLifes">Add life</label>
                 <select id="newLifes" onchange="addLife(this.value)">
-                    <option>
-                        </options>
-                        <optgroup label="--- Still Lifes ---">
-                            <option value="block">Block</option>
-                            <option value="beeHive">Bee-hive</option>
-                            <option value="loaf">Loaf</option>
-                            <option value="boat">Boat</option>
-                            <option value="tub">Tub</option>
-                        </optgroup>
-                        <optgroup label="--- Oscillators ---">
-                            <option value="blinker">Blinker</option>
-                            <option value="toad">Toad</option>
-                            <option value="pulsar">Pulsar</option>
-                            <option value="pentaDecathlon">Penta-decathlon</option>
-                        </optgroup>
-                        <optgroup label="--- Spaceships ---">
-                            <option value="glider">Glider</option>
-                            <option value="LWSS">Light weight</option>
-                            <option value="MWSS">Medium weight</option>
-                            <option value="HWSS">Heavy weight</option>
-                        </optgroup>
-                        <optgroup label="- Eventualy stable -">
-                            <option value="pentomino">The R-pentomino</option>
-                            <option value="diehard">Diehard</option>
-                            <option value="acorn">Acorn</option>
-                        </optgroup>
-                        <optgroup label="----- Guns -----">
-                            <option value="gosper">Gosper glider gun</option>
-                        </optgroup>
+                    <option value="singleCell" selected>
+                        Single cell
+                    </option>
+                    <optgroup label="--- Still Lifes ---">
+                        <option value="block">Block</option>
+                        <option value="beeHive">Bee-hive</option>
+                        <option value="loaf">Loaf</option>
+                        <option value="boat">Boat</option>
+                        <option value="tub">Tub</option>
+                    </optgroup>
+                    <optgroup label="--- Oscillators ---">
+                        <option value="blinker">Blinker</option>
+                        <option value="toad">Toad</option>
+                        <option value="pulsar">Pulsar</option>
+                        <option value="pentaDecathlon">Penta-decathlon</option>
+                    </optgroup>
+                    <optgroup label="--- Spaceships ---">
+                        <option value="glider">Glider</option>
+                        <option value="LWSS">Light weight</option>
+                        <option value="MWSS">Medium weight</option>
+                        <option value="HWSS">Heavy weight</option>
+                    </optgroup>
+                    <optgroup label="- Eventualy stable -">
+                        <option value="pentomino">The R-pentomino</option>
+                        <option value="diehard">Diehard</option>
+                        <option value="acorn">Acorn</option>
+                    </optgroup>
+                    <optgroup label="----- Guns -----">
+                        <option value="gosper">Gosper glider gun</option>
+                    </optgroup>
                 </select>
             </div>
             <div class="show-grid">
                 Show grid
-                <input type="checkbox" id="showGrid" onClick="toggleGrid()">
+                <input type="checkbox" id="showGrid" onClick="toggleGrid()" checked="true">
             </div>
-            <div class="slowdown">
-                Slowdown<br>
-                <input type="range" id="slowdown" name="slowdown" value="0" min="0" max=".5" step=".01"
-                    onmousemove="onSlowDownChange(this.value)">
+            <div class="speed">
+                Speed<br>
+                <input type="range" id="speed" name="speed" value=".5" min="0" max=".5" step=".01"
+                    onmousemove="onSpeedChange(this.value)">
             </div>
             <button onClick="onPauseClick(this)">
-                Pause
+                Start
             </button>
             <button onClick="onClearClick(this)">
                 Clear
@@ -67,6 +68,27 @@
         </div>
     </div>
     <canvas id="viewport"></canvas>
+    <div id="background" class="shadow">
+        <div id="modal" class="modal">
+            <button id="closeModal" class="close">X</button>
+            <h1>Conway's Game of Life</h1>
+            <p>Another implementation of Conway's Game of Life just for fun.</p>
+            <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" rel="noopener noreferrer"
+                target="blank">About Conway's
+                Game of Life</a>
+            <br />
+            <strong>How to play:</strong>
+            <p>
+                Place live cells anywhere on the grid and observe their behaviour. The following rules apply to each
+                cell.
+            </p>
+            <ul>
+                <li>Any live cell with two or three live neighbours survives.
+                <li>Any dead cell with three live neighbours becomes a live cell.</li>
+                <li>All other live cells die in the next generation. Similarly, all other dead cells stay dead.</li>
+            </ul>
+        </div>
+    </div>
 </body>
 
 </html>
